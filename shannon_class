@@ -1,0 +1,76 @@
+import itertools
+import math
+
+class shannon :#if we get memory error, try to reduce number of digits in numbers, 4-5 should be splendid
+
+    def __init__( self ) :
+        self.charList = []
+        self.countList = []#need this to generate rank for plotting 
+        self.shannon = []
+        self.frqList = []
+        
+    def generate( self, dataStr, order ):
+        noSpaceStr = ''
+        sizeStr = len( dataStr )
+        sizeCharList = 0
+        spaceCount = 0
+        
+        for i in range( sizeStr ) :
+            if dataStr[i] == ' ' :#need to update element exceptions for new files
+                spaceCount += 1
+                continue
+            if dataStr[i] in self.charList :
+                noSpaceStr.join( dataSrt[i] )
+                self.countList[ self.charList.index( dataStr[ i ] ) ] += 1
+                sizeCharList += 1
+            else :
+                self.charList.append( dataStr[i] )
+                self.countList.append( 1 )
+                sizeCharList += 1
+        
+        for i in self.countList : 
+            p = self.frequency( i, sizeStr )
+            self.frqList.append(p)
+
+        self.shannon.append( self.entropy( self.frqList ) )
+        
+        if order > 1 :
+            for i in xrange( 1, order ) :
+                nGramCount = ( sizeStr - spaceCount ) / i 
+                tempFrq = []
+                temp =  self.permute( self.charList, i )
+                for i in temp :
+                    tempStr = ''
+                    for j in i :
+                        tempStr.join( j )
+                        tempFrq.append( self.frequency( self.countSubs( noSpaceStr, tempStr ), nGramCount ) ) 
+                self.shannon.append( self.entropy( tempFrq ) )
+                
+        return self.shannon
+    
+    def entropy( self, charList ) :#modify this so i don't have to create arbitrary other listts like temrFrq
+        ent = 0
+        for i in charList :
+           if i > 0 :
+               ent = ent + float( i ) * math.log(i, 2) 
+              
+        return -ent
+    
+    def frequency( self, num, size ) :
+        freq = float( num ) / size 
+        return freq
+
+    def permute( self, charList, gram ) :#itertools.product
+        permuteList = list( itertools.product( charList, repeat = gram ) )
+        return permuteList
+        
+
+    def countSubs( self, string, subString ):
+        count = 0
+        sizeSub = len( subString )
+        i = string.find( subString )
+        while i >= 0:
+            count += 1
+            i = string.find( subString, i + 1 + sizeSub )
+
+        return count
